@@ -15,3 +15,7 @@ mix.js('resources/js/app.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css')
     .sourceMaps();
 mix.copyDirectory('resources/img', 'public/img');
+
+if(mix.inProduction()){
+    mix.version();
+}
