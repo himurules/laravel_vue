@@ -22,8 +22,14 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('phone_number')->nullable();
             $table->boolean('is_admin')->default(false);
+            $table->string('provider')->nullable();
+            $table->string('provider_id')->nullable();
+            $table->string('img_src')->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->engine = 'InnoDB';
+            $table->charset = 'utf8';
+            $table->collation = 'utf8_unicode_ci';
         });
     }
 
