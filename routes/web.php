@@ -23,3 +23,9 @@ Route::get('/blog', 'BlogController@index')->name('blog');
 Route::get('/chefs', 'ChefController@index')->name('chefs');
 Route::get('/contact', 'ContactController@index')->name('contact');
 Route::get('/menu', 'MenuController@index')->name('menu');
+
+Route::get('/admin/categories', 'Admin\AdminController@categories')
+    ->name('edit-categories');
+Route::get('/admin/edit-menu/{any?}', 'Admin\AdminController@editMenu')
+    ->name('edit-menu')->middleware('can:edit-menu')
+    ->where('any', '.*');

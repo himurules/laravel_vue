@@ -2,19 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categories;
+use App\Models\Chefs;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //$this->middleware('auth');
-    }
 
     /**
      * Show the application dashboard.
@@ -23,6 +16,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $otherCategories = Categories::with('foodItem')->where('id', '<>', 3)->get();
+        $exclusive = Categories::with('foodItem')->find(3);
+        $chefs = Chefs::all();
+        //dd($testimonials);
+        return view('home', ['exclusive' => $exclusive, 'otherCategories' => $otherCategories, 'chefs' => $chefs]);
     }
 }

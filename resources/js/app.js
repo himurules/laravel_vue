@@ -14,7 +14,7 @@ require('slick-carousel/slick/slick.min');
 require('gijgo/js/gijgo.min');
 require('jquery-nice-select/js/jquery.nice-select.min');
 
-jQuery(document).ready(function (){
+jQuery(document).ready(function () {
     //require ('./swiper_custom');
     //require ('./mail-script');
     require ('./custom');
@@ -33,7 +33,8 @@ window.Vue = require('vue');
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.component('categories-manager', require('./components/CategoriesComponent.vue').default);
+Vue.component('menu-editor', require('./components/MenuEditor.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

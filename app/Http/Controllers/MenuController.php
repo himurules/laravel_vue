@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categories;
 use Illuminate\Http\Request;
 
 class MenuController extends Controller
@@ -13,6 +14,7 @@ class MenuController extends Controller
      */
     public function index()
     {
-        return view('menu');
+        $otherCategories = Categories::with('foodItem')->where('id', '<>', 3)->get();
+        return view('menu', ['otherCategories' => $otherCategories]);
     }
 }

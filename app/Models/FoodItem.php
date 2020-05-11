@@ -10,9 +10,17 @@ class FoodItem extends Model
     protected $fillable = ['name', 'description', 'img_src', 'price', 'is_active'];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * List of related categories
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function categories(){
-        return $this->belongsToMany('App\Models\Categories', 'menu', 'food_id', 'category_id');
+    public function categories()
+    {
+        return $this->belongsToMany(
+            'App\Models\Categories',
+            'menu',
+            'food_id',
+            'category_id'
+        );
     }
 }

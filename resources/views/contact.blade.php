@@ -96,12 +96,12 @@
 @section('scripts')
     <script>
         function initMap() {
-            console.log('We are loading map');
-            var uluru = {
-                lat: -25.363,
-                lng: 131.044
+            console.log('We are loading map Himu');
+            let uluru = {
+                lat: -33.810276,
+                lng: 151.006067
             };
-            var grayStyles = [{
+            let grayStyles = [{
                 featureType: "all",
                 stylers: [{
                     saturation: -90
@@ -119,10 +119,7 @@
                 }
             ];
             var map = new google.maps.Map(document.getElementById('my-map'), {
-                center: {
-                    lat: -31.197,
-                    lng: 150.744
-                },
+                center: uluru,
                 zoom: 9,
                 styles: grayStyles,
                 scrollwheel: false
