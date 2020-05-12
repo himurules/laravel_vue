@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FoodItemPost;
 use App\Models\FoodItem;
 use Illuminate\Http\Request;
 
@@ -39,24 +40,10 @@ class FoodItemController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(FoodItemPost $request)
     {
-        if (!$request->user()->can('edit-menu')) {
-            return response('Unauthorized', 403);
-        }
-
-        $request->validate(
-            [
-                'name' => 'required| max:30',
-                'price' => 'required | numeric | min:0',
-                'category'   => 'required',
-                'description' => 'required',
-                'is_active' => 'required | boolean',
-                'img_src'   => 'required'
-            ]
-        );
-        $foodItem = FoodItem::create($request->post());
-        $foodItem->categories()->attach($request->post()['category']);
+        $foodItem = FoodItem::create($request->validated());
+        $foodItem->categories()->attach($request->validated()['category']);
     }
 
     /**
@@ -74,11 +61,16 @@ class FoodItemController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\FoodItem  $foodItem
-     * @return \Illuminate\Http\Response
+     * @return FoodItem
      */
     public function edit(FoodItem $foodItem)
     {
-        //
+        $categories = [];
+        foreach ($foodItem->categories as $cat) {
+            $categories[] = $cat->pivot->category_id;
+        }
+        $foodItem->category = $categories;
+        return $foodItem;
     }
 
     /**
@@ -88,9 +80,18 @@ class FoodItemController extends Controller
      * @param  \App\Models\FoodItem  $foodItem
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, FoodItem $foodItem)
+    public function update(FoodItemPost $request, FoodItem $foodItem)
     {
-        //
+        $foodItem->update($request->validated());
+        $prev_categories = [];
+        foreach ($foodItem->categories as $cat) {
+            $prev_categories[] = $cat->pivot->category_id;
+        }
+        $new_categories = $request->validated()['category'];
+        $detach = array_diff($prev_categories, $new_categories);
+        $attach = array_diff($new_categories, $prev_categories);
+        $foodItem->categories()->detach($detach);
+        $foodItem->categories()->attach($attach);
     }
 
     /**

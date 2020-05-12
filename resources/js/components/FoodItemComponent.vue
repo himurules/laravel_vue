@@ -15,7 +15,7 @@
             <div class="form-group row">
                 <label for="price" class="col-sm-2 col-form-label">Price:</label>
                 <div class="col-sm-10">
-                    <input type="number" v-model="item.price" class="form-control" id="price" required>
+                    <input type="number" v-model="item.price" class="form-control" id="price" required min="0" step="any">
                 </div>
             </div>
             <div class="form-group row">
@@ -27,14 +27,14 @@
             <div class="form-group row">
                 <label for="category" class="col-sm-2 col-form-label">Category:</label>
                 <div class="col-sm-10">
-                    <select multiple class="selectpicker form-select" id="category" v-model="item.category">
+                    <select multiple class="selectpicker form-select" id="category" v-model="item.category" style="height: 100%">
                         <option v-for="(cat, index) in initialCategories" :value="cat.id" :key="cat.id" >{{ cat.name }}</option>
                     </select>
                 </div>
             </div>
             <div class="form-group row">
                 <div class="col-sm-2">
-                    <img v-if="item.img_src" :src="`/img/${item.img_src}`" style="width:100">
+                    <img v-if="id && item.img_src" :src="`/img/${item.img_src}`" style="width:200px">
                     <label v-else>Image Src:</label>
                 </div>
                 <div class="col-sm-10">
@@ -63,7 +63,7 @@
             dropZone: vue2Dropzone
         },
         name: "FoodItemComponent",
-        props: ['initial-categories'],
+        props: ['initial-categories', 'id'],
         data() {
             return {
                 dropzoneOptions: {
@@ -87,6 +87,14 @@
                 errors: []
             };
         },
+        created() {
+          if(this.id) {
+            axios.get('/api/food-items/' + this.id)
+              .then(
+                  res => this.item = res.data
+              );
+          }
+        },
         methods: {
             removeItem(){
 
@@ -96,7 +104,10 @@
                 if(files.length > 0 && files[0].filename){
                     this.item.img_src = files[0].filename;
                 }
-                axios.post('/api/food-items/add', this.item)
+                let url = '/api/food-items/add';
+                if(this.id)
+                    url = '/api/food-items/'+this.id;
+                axios.post(url, this.item)
                     .then(res => {
                         this.$router.push('/');
                     })
