@@ -12,7 +12,7 @@
                     <router-link :to="{name: 'list-food-items'}" class="btn btn-outline-primary mx-2">List Food Items</router-link>
                     <router-link :to="{name: 'add-food-item'}" class=" btn btn-outline-primary mx-2">Add Food Item</router-link>
                 </nav>
-                <router-view :initial-categories="categories"></router-view>
+                <router-view ></router-view>
             </div>
         </div>
     </section>
@@ -23,10 +23,15 @@
     import CategoriesComponent from "./CategoriesComponent";
     import FoodItemComponent from "./FoodItemComponent";
     import ListFoodItem from "./ListFoodItem";
+    import store from '../store';
 
     export default {
+        store,
         props: ['categories'],
         name: "MenuEditor",
+        created() {
+            this.$store.commit('SET_CATEGORIES', _.cloneDeep(this.categories));
+        },
         router: new VueRouter({
             mode: 'history',
             base: 'admin/edit-menu',

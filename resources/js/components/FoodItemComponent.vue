@@ -28,7 +28,7 @@
                 <label for="category" class="col-sm-2 col-form-label">Category:</label>
                 <div class="col-sm-10">
                     <select multiple class="selectpicker form-select" id="category" v-model="item.category" style="height: 100%">
-                        <option v-for="(cat, index) in initialCategories" :value="cat.id" :key="cat.id" >{{ cat.name }}</option>
+                        <option v-for="(cat, index) in categories" :value="cat.id" :key="cat.id" >{{ cat.name }}</option>
                     </select>
                 </div>
             </div>
@@ -56,14 +56,29 @@
 
 <script>
     import vue2Dropzone from 'vue2-dropzone';
-    import 'vue2-dropzone/dist/vue2Dropzone.min.css'
+    import 'vue2-dropzone/dist/vue2Dropzone.min.css';
+    import {mapState} from 'vuex';
+
+    function newItem(){
+        return {
+            name: '',
+            price: 0.00,
+            description: '',
+            img_src: '',
+            is_active: 1,
+            category: []
+        };
+    }
 
     export default {
         components: {
             dropZone: vue2Dropzone
         },
         name: "FoodItemComponent",
-        props: ['initial-categories', 'id'],
+        props: ['id'],
+        computed: mapState({
+          categories: 'categories'
+        }),
         data() {
             return {
                 dropzoneOptions: {
@@ -76,14 +91,7 @@
                         file.filename = res;
                     }
                 },
-                item: {
-                    name: '',
-                    price: 0.00,
-                    description: '',
-                    img_src: '',
-                    is_active: 1,
-                    category: []
-                },
+                item: newItem(),
                 errors: []
             };
         },
@@ -95,10 +103,11 @@
               );
           }
         },
+        beforeRouteLeave (to, from, next) {
+            this.item = newItem();
+            next();
+        },
         methods: {
-            removeItem(){
-
-            },
             saveItem(){
                 let files = this.$refs.dropzone.getAcceptedFiles();
                 if(files.length > 0 && files[0].filename){
@@ -109,7 +118,7 @@
                     url = '/api/food-items/'+this.id;
                 axios.post(url, this.item)
                     .then(res => {
-                        this.$router.push('/');
+                        this.$router.push('/list-food-items');
                     })
                     .catch(error => {
                         let messages = Object.values(error.response.data.errors);

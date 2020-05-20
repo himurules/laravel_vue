@@ -37,6 +37,7 @@
         "masonry-layout": "^4.2.2",
         "owl.carousel": "^2.3.4",
         "slick-carousel": "^1.8.1",
-        "swiper": "^5.3.7"
+        "swiper": "^5.3.7",
+        "vuex": "^3.4.0"
     }
 }

@@ -17,6 +17,21 @@ class AdminController extends Controller
     }
 
     /**
+     * Get all food Items for a category
+     *
+     * @param Categories $category given category
+     *
+     * @return array
+     *
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function categoryFoodItems(Categories $category)
+    {
+        $this->authorize('manage', 'App\Categories');
+        return ['success' => true, 'foodItems' => $category->foodItem()->get()];
+    }
+
+    /**
      * Update/Insert Categories
      *
      * @param Request $request Request Object
@@ -69,6 +84,6 @@ class AdminController extends Controller
      */
     public function editMenu()
     {
-        return view('admin.editMenu', ['categories' => Categories::with('foodItem')->get()]);
+        return view('admin.editMenu', ['categories' => Categories::all()]);
     }
 }

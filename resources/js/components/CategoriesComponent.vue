@@ -2,15 +2,15 @@
     <form class="text-center border border-light p-5" @submit.prevent="saveCategories()">
         <a @click="addCategory()" class="btn btn-primary text-white h4 mb-4">+ Add Category</a>
         <div v-for="(category, index) in categories" :key="category.id" class="text-left">
-            <input type="text" v-model="category.name" class="form-control mb-4" :ref="category.name">
-            <input type="text" v-model="category.description" class="form-control mb-4">
+            <input type="text" :value="category.name" class="form-control mb-4" :ref="category.name" @input="update($event, 'name', index)">
+            <input type="text" :value="category.description" class="form-control mb-4" @input="update($event, 'description', index)">
             <div class="form-row mb-4">
                 <div class="col-auto">
                     <img v-if="category.img_src" :src="`/img/${category.img_src}`">
                     <label v-else>Image Src:</label>
                 </div>
                 <div class="col">
-                    <input type="text" v-model.lazy="category.img_src"  class="form-control mb-4">
+                    <input type="text" :value="category.img_src"  class="form-control mb-4" @change="update($event, 'img_src', index)">
                 </div>
             </div>
             <a @click="removeCategory(index)" class="btn btn-danger text-white">- Delete Category</a>
@@ -23,33 +23,28 @@
     </form>
 </template>
 <script>
+    import {mapState} from "vuex";
+
     export default {
-        props: ['initialCategories'],
-        data() {
-            return {
-                categories: _.cloneDeep(this.initialCategories),
-                feedback: '',
-            }
-        },
+        computed: mapState({
+            categories: 'categories',
+            feedback: 'feedback'
+        }),
         methods: {
+            update($event, property, index){
+                this.$store.commit('UPDATE_CATEGORY',{
+                    index,
+                    property,
+                    value: $event.target.value
+                });
+            },
             removeCategory(index) {
                 if(confirm('Are you sure?')) {
-                   let id = this.categories[index].id;
-                   if(id > 0) {
-                        axios.delete('/api/categories/'+ id)
-                        .then((res) => {
-                            if(res.data.success) {
-                                this.feedback = "Category deleted.";
-                                this.categories = res.data.categories;
-                            }
-                        });
-                   }
-                   else
-                    this.categories.splice(index,1);
+                    this.$store.dispatch('removeCategory', index);
                 }
             },
             addCategory() {
-                this.categories.push({
+                this.$store.commit('ADD_CATEGORY',{
                     id: 0,
                     name: '',
                     description: '',
@@ -63,15 +58,7 @@
                 });
             },
             saveCategories() {
-                axios.post('/api/categories/upsert', {
-                    categories: this.categories
-                })
-                .then((res) => {
-                   if(res.data.success) {
-                       this.feedback = "Changes saved.";
-                       this.categories = res.data.categories;
-                   }
-                });
+                this.$store.dispatch('saveCategories');
             }
         }
     }

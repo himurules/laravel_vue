@@ -17,8 +17,10 @@ use Intervention\Image\ImageManagerStatic as Image;
 */
 
 Route::post('/categories/upsert', 'Admin\AdminController@upsert');
+Route::get('/categories/{category}', 'Admin\AdminController@categoryFoodItems');
 Route::delete('/categories/{category}', 'Admin\AdminController@destroy');
 Route::post('/food-items/add', 'Admin\FoodItemController@store');
+Route::delete('/food-items/{foodItem}', 'Admin\FoodItemController@destroy');
 Route::get(
     '/food-items/{foodItem}',
     'Admin\FoodItemController@edit'
@@ -35,7 +37,7 @@ Route::post(
         $file = $request->file('file');
         $filename    = $file->getClientOriginalName();
         $image_resize = Image::make($file->getRealPath());
-        $image_resize->resize(165, 163);
+        $image_resize->resize(360, 330);
         $image_resize->save(public_path('img/food_menu/'.$filename));
         return 'food_menu/'.$filename;
     }

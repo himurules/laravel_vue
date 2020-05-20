@@ -54,7 +54,7 @@ class FoodItemController extends Controller
      */
     public function show(FoodItem $foodItem)
     {
-        //
+        return $foodItem;
     }
 
     /**
@@ -83,25 +83,18 @@ class FoodItemController extends Controller
     public function update(FoodItemPost $request, FoodItem $foodItem)
     {
         $foodItem->update($request->validated());
-        $prev_categories = [];
-        foreach ($foodItem->categories as $cat) {
-            $prev_categories[] = $cat->pivot->category_id;
-        }
-        $new_categories = $request->validated()['category'];
-        $detach = array_diff($prev_categories, $new_categories);
-        $attach = array_diff($new_categories, $prev_categories);
-        $foodItem->categories()->detach($detach);
-        $foodItem->categories()->attach($attach);
+        $foodItem->categories()->sync($request->validated()['category']);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\FoodItem  $foodItem
-     * @return \Illuminate\Http\Response
+     * @return array
      */
     public function destroy(FoodItem $foodItem)
     {
-        //
+        $foodItem->delete();
+        return ['success' => true];
     }
 }
