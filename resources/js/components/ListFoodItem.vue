@@ -40,7 +40,7 @@
             removeItem(id){
                 axios.delete
                 (
-                    '/api//food-items/'+id
+                    '/api/food-items/'+id
                 ).then(
                     (res) =>
                     {
